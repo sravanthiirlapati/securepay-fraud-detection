@@ -1,0 +1,352 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SecurePay | Fraud Prevention System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            color: #38bdf8;
+        }
+
+        header p {
+            font-size: 14px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: #0f172a;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            color: #cbd5e1;
+            font-size: 17px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 35px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px #00000010;
+        }
+
+        .container h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 8px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0369a1;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            line-height: 1.7;
+            display: none;
+        }
+
+        .safe {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .suspicious {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .info {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #e0f2fe;
+            border-radius: 10px;
+            color: #075985;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+
+        @media (max-width: 650px) {
+            .container {
+                margin: 20px;
+                padding: 22px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            header {
+                padding: 18px 5%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h2>SecurePay</h2>
+        <p>Payment Safety System</p>
+    </header>
+
+    <section class="hero">
+        <h1>Secure Your Digital Payments</h1>
+        <p>Check transactions for suspicious patterns.</p>
+    </section>
+
+    <div class="container">
+
+        <h2>Transaction Fraud Checker</h2>
+
+        <form id="fraudForm">
+
+            <label for="amount">
+                Transaction Amount (₹)
+            </label>
+
+            <input
+                type="number"
+                id="amount"
+                min="1"
+                placeholder="Enter transaction amount"
+                required
+            >
+
+            <label for="method">
+                Payment Method
+            </label>
+
+            <select id="method">
+                <option value="UPI">UPI</option>
+                <option value="Net Banking">Net Banking</option>
+                <option value="Debit Card">Debit Card</option>
+                <option value="Credit Card">Credit Card</option>
+            </select>
+
+            <label for="receiver">
+                Receiver Name
+            </label>
+
+            <input
+                type="text"
+                id="receiver"
+                placeholder="Enter receiver name"
+                required
+            >
+
+            <label for="unfamiliar">
+                Is this receiver unfamiliar?
+            </label>
+
+            <select id="unfamiliar">
+                <option value="no">No</option>
+                <option value="yes">Yes</option>
+            </select>
+
+            <button type="submit">
+                Check Transaction
+            </button>
+
+        </form>
+
+        <div id="result"></div>
+
+    </div>
+
+    <div class="info">
+        <h3>Payment Safety Tips</h3>
+
+        <p>
+            • Never share your UPI PIN or OTP.
+        </p>
+
+        <p>
+            • Verify the receiver before sending money.
+        </p>
+
+        <p>
+            • Be careful with unknown payment requests.
+        </p>
+
+        <p>
+            • Do not scan QR codes to receive money.
+        </p>
+    </div>
+
+    <footer>
+        <p>
+            SecurePay | UPI and Online Payment Fraud Prevention
+        </p>
+
+        <p>
+            Educational Project Prototype
+        </p>
+    </footer>
+
+    <script>
+
+        document.getElementById("fraudForm")
+            .addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+
+            const amount = Number(
+                document.getElementById("amount").value
+            );
+
+            const receiver =
+                document.getElementById("receiver").value;
+
+            const unfamiliar =
+                document.getElementById("unfamiliar").value;
+
+            const method =
+                document.getElementById("method").value;
+
+            const result =
+                document.getElementById("result");
+
+            result.style.display = "block";
+
+            result.className = "";
+
+            result.innerHTML = "Checking transaction...";
+
+            try {
+
+                const response = await fetch("/check_fraud", {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        amount: amount,
+
+                        receiver: receiver,
+
+                        unfamiliar: unfamiliar,
+
+                        method: method
+
+                    })
+
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error("Server error");
+                }
+
+                if (data.status === "Suspicious") {
+
+                    result.className = "suspicious";
+
+                    result.innerHTML =
+                        "⚠️ Suspicious Transaction Detected!<br>" +
+                        "Risk Score: " + data.risk_score + "%<br>" +
+                        "Receiver: " + data.receiver + "<br>" +
+                        "Reason: " + data.reasons.join(", ");
+
+                } else {
+
+                    result.className = "safe";
+
+                    result.innerHTML =
+                        "✅ No Suspicious Pattern Detected<br>" +
+                        "Risk Score: " + data.risk_score + "%<br>" +
+                        "Receiver: " + data.receiver;
+
+                }
+
+            } catch (error) {
+
+                result.className = "suspicious";
+
+                result.innerHTML =
+                    "Unable to connect to the fraud detection server.";
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
